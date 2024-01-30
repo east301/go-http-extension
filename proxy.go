@@ -9,7 +9,7 @@ import (
 
 type reverseProxyExSessionContextKeyType int
 
-const ReverseProxyExSessionContextKey reverseProxyExSessionContextKeyType = iota
+const reverseProxyExSessionContextKey reverseProxyExSessionContextKeyType = iota
 
 type ReverseProxyEx[T any] struct {
 	OnRequest  func(*httputil.ProxyRequest) T
@@ -19,12 +19,12 @@ type ReverseProxyEx[T any] struct {
 
 func (p *ReverseProxyEx[T]) handleRequest(request *httputil.ProxyRequest) {
 	session := p.OnRequest(request)
-	request.In = request.In.WithContext(context.WithValue(request.In.Context(), ReverseProxyExSessionContextKey, session))
-	request.Out = request.Out.WithContext(context.WithValue(request.Out.Context(), ReverseProxyExSessionContextKey, session))
+	request.In = request.In.WithContext(context.WithValue(request.In.Context(), reverseProxyExSessionContextKey, session))
+	request.Out = request.Out.WithContext(context.WithValue(request.Out.Context(), reverseProxyExSessionContextKey, session))
 }
 
 func (p *ReverseProxyEx[T]) handleResponse(response *http.Response) error {
-	session, ok := response.Request.Context().Value(ReverseProxyExSessionContextKey).(T)
+	session, ok := response.Request.Context().Value(reverseProxyExSessionContextKey).(T)
 	if !ok {
 		panic(errors.New("could not obtain session object"))
 	}
@@ -33,7 +33,7 @@ func (p *ReverseProxyEx[T]) handleResponse(response *http.Response) error {
 }
 
 func (p *ReverseProxyEx[T]) handleError(response http.ResponseWriter, request *http.Request, err error) {
-	session, ok := request.Context().Value(ReverseProxyExSessionContextKey).(T)
+	session, ok := request.Context().Value(reverseProxyExSessionContextKey).(T)
 	if !ok {
 		panic(errors.New("could not obtain session object"))
 	}
