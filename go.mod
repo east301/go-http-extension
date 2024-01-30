@@ -1,3 +1,3 @@
-module pkg.e3apps.dev/go-http-extension
+module github.com/east301/go-http-extension
 
 go 1.21.5
